@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationDemo.Exceptions;
 using WebApplicationDemo.Services.Interfaces;
 
 namespace WebApplicationDemo.Controllers
@@ -17,14 +18,28 @@ namespace WebApplicationDemo.Controllers
         [HttpGet(nameof(GetCurrentCounter))]
         public IActionResult GetCurrentCounter()
         {
-            return new OkObjectResult(_counterService.GetCounter());
+            try
+            {
+                return new OkObjectResult(_counterService.GetCounter());
+            }
+            catch(FileSystemException)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet(nameof(IncrementCounter))]
         public IActionResult IncrementCounter()
         {
-            _counterService.Increment();
-            return new OkObjectResult("SUCCESS!");
+            try
+            {
+                _counterService.Increment();
+                return new OkObjectResult("SUCCESS!");
+            }
+            catch(FileSystemException)
+            {
+                return new StatusCodeResult(500);
+            }
         }
     }
 }

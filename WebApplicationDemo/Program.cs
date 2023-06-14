@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using WebApplicationDemo.Database;
 using WebApplicationDemo.Services;
 using WebApplicationDemo.Services.Interfaces;
 
@@ -8,7 +10,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<ICounterService, CounterService>();
+builder.Services.AddDbContext<DatabaseContext>();
+
+//builder.Services.AddSingleton<ICounterService, CounterService>();
+builder.Services.AddScoped<ICounterService, CounterInFileService>();
 
 var app = builder.Build();
 
