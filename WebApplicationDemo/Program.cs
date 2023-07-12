@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DatabaseContext>();
 
 //builder.Services.AddSingleton<ICounterService, CounterService>();
-builder.Services.AddScoped<ICounterService, CounterInFileService>();
+builder.Services.AddScoped<ICounterServiceAsync, CounterServiceDatabase>();
 
 var app = builder.Build();
 
@@ -27,5 +27,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using(var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    dbContext.Database.Migrate();
+
+    scope.ServiceProvider.GetRequiredService<ICounterServiceAsync>().Initialize();
+}
 
 app.Run();

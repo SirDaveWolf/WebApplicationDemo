@@ -8,19 +8,19 @@ namespace WebApplicationDemo.Controllers
     [Route("[controller]")]
     public class CounterController : ControllerBase
     {
-        private ICounterService _counterService;
+        private ICounterServiceAsync _counterService;
 
-        public CounterController(ICounterService counterService)
+        public CounterController(ICounterServiceAsync counterService)
         {
             _counterService = counterService;
         }
 
         [HttpGet(nameof(GetCurrentCounter))]
-        public IActionResult GetCurrentCounter()
+        public async Task<IActionResult> GetCurrentCounter()
         {
             try
             {
-                return new OkObjectResult(_counterService.GetCounter());
+                return new OkObjectResult(await _counterService.GetCounter());
             }
             catch(FileSystemException)
             {
@@ -29,11 +29,11 @@ namespace WebApplicationDemo.Controllers
         }
 
         [HttpGet(nameof(IncrementCounter))]
-        public IActionResult IncrementCounter()
+        public async Task<IActionResult> IncrementCounter()
         {
             try
             {
-                _counterService.Increment();
+                await _counterService.Increment();
                 return new OkObjectResult("SUCCESS!");
             }
             catch(FileSystemException)
